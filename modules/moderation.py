@@ -7,6 +7,7 @@ from contextlib import suppress
 from utils.converters import SearchMember, SearchRole
 
 class BannedMember(commands.Converter):
+    # Thanks Rapptz x
     async def convert(self, ctx, argument):
         if argument.isdigit():
             member_id = int(argument, base=10)
@@ -198,6 +199,7 @@ class Moderation(commands.Cog, name='mod', description='Moderation Based Command
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(send_messages=True, ban_members=True)
     async def unban(self, ctx, member: BannedMember, *, reason: Optional[str] = "No reason provided"):
+        # Thanks Rapptz x
         await ctx.guild.unban(member.user, reason=reason)
         if member.reason:
             return await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.')
