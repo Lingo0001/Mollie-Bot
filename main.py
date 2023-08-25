@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 
 # Logging
-import logging
 import traceback
 import sys
 
