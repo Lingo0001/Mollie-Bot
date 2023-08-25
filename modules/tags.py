@@ -1,7 +1,6 @@
 import discord
 import datetime
 from discord.ext import commands
-from utils import pages
 from utils.converters import SearchMember
 
 class Tags(commands.Cog, name='tags', description='Tag Commands'):
@@ -222,32 +221,6 @@ class Tags(commands.Cog, name='tags', description='Tag Commands'):
         self.db_c.execute("UPDATE tags SET uses = uses + 1 WHERE guild_id=$1 AND name=$2", (ctx.guild.id, tag[0]))
         self.db_conn.commit()
         return await ctx.send(tag[0])
-
-    @tag.command(name='search', help='Search for a tag')
-    @commands.bot_has_guild_permissions(send_messages=True, embed_links=True, add_reactions=True)
-    async def tag_search(self, ctx, *, query: str):
-        query = query.lower()
-        if len(query) < 2:
-            return await ctx.send('Tag name query must be 2 characters or more')
-        self.db_c.execute("SELECT name FROM tags WHERE guild_id=$1 AND LENGTH(name) > 2 ORDER BY uses DESC", (ctx.guild.id,))
-        tags = self.db_c.fetchall()
-        if len(tags) == 0:
-            return await ctx.send('This server has created no tags')
-        results = [x[0] for x in tags]
-        final_list = [x for x in results if query in x]
-        if len(final_list) == 0:
-            return await ctx.send('No tags found')
-        embed = discord.Embed(
-            colour=self.colour,
-            title='Search Results:'
-        )
-        if ctx.author.avatar:
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar.url)
-        else:
-            embed.set_author(name=ctx.author.display_name)
-        embed.set_footer(text=f'{len(final_list)} results')
-        rows = [word for word in final_list]
-        return await pages.send_as_pages(ctx, embed, rows)
 
 async def setup(bot):
     await bot.add_cog(Tags(bot))
